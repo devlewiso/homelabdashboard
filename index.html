@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeLab - Infraestructura Personal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000000;
+            color: #00ff41;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(50px) translateX(50px); }
+        }
+
+        /* Glowing particles */
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: #00ff41;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 10s infinite;
+            box-shadow: 0 0 10px #00ff41;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .glitch {
+            font-size: 5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
+                         0.025em 0.04em 0 #fffc00;
+            animation: glitch 725ms infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
+                             0.025em 0.04em 0 #fffc00;
+            }
+            15% {
+                text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff,
+                             0.025em 0.04em 0 #fffc00;
+            }
+            16% {
+                text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff,
+                             -0.05em -0.05em 0 #fffc00;
+            }
+            49% {
+                text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff,
+                             -0.05em -0.05em 0 #fffc00;
+            }
+            50% {
+                text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff,
+                             0 -0.04em 0 #fffc00;
+            }
+            99% {
+                text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff,
+                             0 -0.04em 0 #fffc00;
+            }
+            100% {
+                text-shadow: -0.05em 0 0 #00fffc, -0.025em -0.04em 0 #fc00ff,
+                             -0.04em -0.025em 0 #fffc00;
+            }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #00ff41;
+            margin: 2rem 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41; }
+            50% { text-shadow: 0 0 20px #00ff41, 0 0 30px #00ff41, 0 0 40px #00ff41; }
+        }
+
+        .cta-button {
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            background: transparent;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #00ff41;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover {
+            color: #000;
+            box-shadow: 0 0 20px #00ff41;
+        }
+
+        .cta-button:hover::before {
+            left: 0;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+        }
+
+        .diagram-container {
+            background: rgba(0, 20, 0, 0.8);
+            border-radius: 0;
+            padding: 3rem;
+            border: 2px solid #00ff41;
+            margin-bottom: 3rem;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.1);
+        }
+
+        .diagram-container::before,
+        .diagram-container::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ff41;
+        }
+
+        .diagram-container::before {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .diagram-container::after {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .network-diagram {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        /* Animated connection line between servers */
+        .network-diagram::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                #00ff41 0%, 
+                transparent 50%, 
+                #00ff41 100%);
+            animation: connectionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes connectionPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .node {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff41;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .node:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.6);
+            border-color: #00fffc;
+        }
+
+        .node::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .node-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px #00ff41);
+        }
+
+        .node-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .node-description {
+            color: #00ff41;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .dns-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #00fffc;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #00fffc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 0 20px rgba(0, 255, 252, 0.6);
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .domain-badge {
+            background: rgba(255, 0, 255, 0.2);
+            border: 1px solid #fc00ff;
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+            color: #fc00ff;
+            margin-top: 0.5rem;
+            display: inline-block;
+            text-shadow: 0 0 5px #fc00ff;
+        }
+
+        .mini-service-proxmox, .mini-service {
+            padding: 0.4rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid;
+            font-size: 0.75rem;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .mini-service-proxmox {
+            border-color: #ff6600;
+            color: #ff6600;
+        }
+
+        .mini-service-proxmox:hover {
+            background: rgba(255, 102, 0, 0.3);
+            box-shadow: 0 0 10px #ff6600;
+            transform: scale(1.05);
+        }
+
+        .mini-service {
+            border-color: #00fffc;
+            color: #00fffc;
+        }
+
+        .mini-service:hover {
+            background: rgba(0, 255, 252, 0.3);
+            box-shadow: 0 0 10px #00fffc;
+            transform: scale(1.05);
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: transparent;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tech-tag:hover {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 15px #00ff41;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: #000;
+            border: 2px solid #00ff41;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
+            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 65, 0.05), transparent);
+            animation: scanline 2s linear infinite;
+            pointer-events: none;
+        }
+
+        .close {
+            color: #00ff41;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 10px #00ff41;
+        }
+
+        .close:hover {
+            color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            font-size: 2rem;
+            color: #00ff41;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00ff41;
+        }
+
+        .modal-body {
+            color: #00ff41;
+            line-height: 1.8;
+        }
+
+        .modal-stats {
+            background: rgba(0, 255, 65, 0.05);
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid #00ff41;
+            font-family: 'Courier New', monospace;
+        }
+
+        .modal-stats div {
+            padding: 0.3rem 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+        }
+
+        .modal-stats div:last-child {
+            border-bottom: none;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem;
+            border: 1px solid #00ff41;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: #00fffc;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 5px #00ff41);
+        }
+
+        .service-title {
+            font-size: 1.3rem;
+            color: #00ff41;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-line {
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            margin: 0.5rem 0;
+        }
+
+        .terminal-line::before {
+            content: '> ';
+            color: #00fffc;
+        }
+
+        @media (max-width: 768px) {
+            .glitch { font-size: 2.5rem; }
+            .subtitle { font-size: 1rem; }
+            .network-diagram {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <h1 class="glitch">◢ HOMELAB ◣</h1>
+        <p class="subtitle">[ Infraestructura Cyberpunk ]</p>
+        <p class="terminal-line">System.initialize() → Ready</p>
+        <a href="#diagram" class="cta-button">▶ Iniciar Exploración</a>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">◢ CASAOS SERVICES ◣</h2>
+        
+        <div class="services-grid">
+            <div class="service-card" onclick="showModal('files')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] FILES</div>
+                <div class="node-description">File Manager :: Web-based Content Administration</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('plex')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] PLEX</div>
+                <div class="node-description">Media Server :: Professional Streaming Platform</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('prowlarr')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] PROWLARR</div>
+                <div class="node-description">Indexer :: Search Management System</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('jellyfin')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] JELLYFIN</div>
+                <div class="node-description">Media Server :: Open-Source Alternative</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('sonarr')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] SONARR</div>
+                <div class="node-description">TV Manager :: Automated Series Management</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('radarr')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] RADARR</div>
+                <div class="node-description">Movie Manager :: Automated Film Management</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('openwebui')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] OPENWEBUI</div>
+                <div class="node-description">AI Interface :: Local LLM Interaction</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('nvr-casa')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] NVR</div>
+                <div class="node-description">Surveillance :: IP Camera Recording System</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('prometheus')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] PROMETHEUS</div>
+                <div class="node-description">Metrics :: Real-time Monitoring System</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('ha-casa')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] HOME-AI</div>
+                <div class="node-description">Automation :: Smart Home Platform</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('overseerr')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] OVERSEERR</div>
+                <div class="node-description">Request Portal :: Media Request Management</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('appstore')">
+                <div class="service-icon">⬡</div>
+                <div class="service-title">[SVC] APPSTORE</div>
+                <div class="node-description">Marketplace :: CasaOS Application Store</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">◢ TECH STACK ◣</h2>
+        <div class="tech-list" style="justify-content: center; max-width: 1000px; margin: 0 auto;">
+            <span class="tech-tag">PROXMOX VE 9.0.11</span>
+            <span class="tech-tag">AMD RYZEN 7 5700G</span>
+            <span class="tech-tag">LINUX 6.14</span>
+            <span class="tech-tag">TP-LINK OMADA</span>
+            <span class="tech-tag">HOME ASSISTANT</span>
+            <span class="tech-tag">NGINX</span>
+            <span class="tech-tag">CLOUDFLARE</span>
+            <span class="tech-tag">LINODE</span>
+            <span class="tech-tag">NVR</span>
+            <span class="tech-tag">GRAFANA</span>
+            <span class="tech-tag">PROMETHEUS</span>
+            <span class="tech-tag">CASAOS</span>
+            <span class="tech-tag">OPENWEBUI</span>
+            <span class="tech-tag">DOCKER</span>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">◢ ABOUT PROJECT ◣</h2>
+        <div class="diagram-container">
+            <div style="max-width: 900px; margin: 0 auto; text-align: left;">
+                <p class="terminal-line">System.info() → Loading project details...</p>
+                <br>
+                <div style="color: #00ff41; line-height: 2; font-size: 1.1rem;">
+                    <p style="margin-bottom: 1.5rem;">
+                        Este <span style="color: #00fffc; text-shadow: 0 0 10px #00fffc;">HomeLab</span> es una infraestructura personal diseñada, configurada y administrada por <span style="color: #fc00ff; text-shadow: 0 0 10px #fc00ff;">Iran Lewis</span>. Su propósito es doble: servir como un entorno funcional para la gestión, automatización y virtualización del hogar; y al mismo tiempo actuar como un <span style="color: #fffc00; text-shadow: 0 0 10px #fffc00;">portafolio técnico</span> que demuestra habilidades en redes, servidores, seguridad, virtualización, integración de IA y desarrollo de interfaces interactivas.
+                    </p>
+                    <p style="margin-bottom: 1.5rem;">
+                        Cada servicio, nodo y tecnología aquí desplegada representa horas de aprendizaje, experimentación y optimización práctica con <span style="color: #00fffc; text-shadow: 0 0 10px #00fffc;">enfoque profesional</span>. Desde la administración de contenedores y máquinas virtuales hasta la integración de soluciones open-source, este proyecto no solo simplifica procesos, sino que también inspira a otros profesionales a explorar el potencial de la automatización personal.
+                    </p>
+                    <p style="margin-bottom: 1.5rem;">
+                        Este proyecto refleja una filosofía clara: <span style="color: #ff6600; text-shadow: 0 0 10px #ff6600;">Entender → Construir → Mejorar</span> continuamente.
+                    </p>
+                    <div style="margin-top: 2rem; padding: 1.5rem; border: 1px solid #00ff41; background: rgba(0, 255, 65, 0.05);">
+                        <p class="terminal-line">Core.values() → Output:</p>
+                        <div style="margin-left: 2rem; margin-top: 1rem;">
+                            <p class="terminal-line">→ Automatización inteligente</p>
+                            <p class="terminal-line">→ Infraestructura escalable</p>
+                            <p class="terminal-line">→ Aprendizaje continuo</p>
+                            <p class="terminal-line">→ Soluciones open-source</p>
+                            <p class="terminal-line">→ Innovación práctica</p>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <p class="terminal-line">Status: [OPERATIONAL] | Uptime: 99.9% | Last.update: 2025</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="diagram">
+        <h2 class="section-title">◢ Arquitectura de Red ◣</h2>
+        
+        <div class="diagram-container">
+            <div class="network-diagram">
+                <div class="node" onclick="showModal('homelab')">
+                    <div class="dns-badge">
+                        ◢ CLOUDFLARE DNS ◣
+                    </div>
+                    <div class="node-icon">⬢</div>
+                    <div class="node-title">HOMELAB::CORE</div>
+                    <div class="domain-badge">◢ homelab.domain.net ◣</div>
+                    <div class="node-description">
+                        <div class="terminal-line">CPU: AMD Ryzen 7 5700G [16 Cores]</div>
+                        <div class="terminal-line">RAM: 19.02/22.77 GiB [83.52%]</div>
+                        <div class="terminal-line">STO: 97.44/495.96 GB</div>
+                        <div class="terminal-line">UPT: 7d 22h 31m</div>
+                    </div>
+                    <div class="tech-list">
+                        <span class="tech-tag">PROXMOX</span>
+                        <span class="tech-tag">LINUX 6.14</span>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #00ff41;">
+                        <div style="color: #ff6600; font-weight: bold; margin-bottom: 0.8rem; font-size: 0.9rem; text-transform: uppercase;">◢ PROXMOX VMS ◣</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.75rem;">
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('omada')">⬢ 101</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('backup')">⬢ 102</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('nvr')">⬢ 104</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('monitoring')">⬢ 120</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('webui')">⬢ 121</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('casaos')">⬢ 100</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('homeassistant')">⬢ 200</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('hub')">⬢ 289</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('localnet')">⬢ NET</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('entertain')">⬢ ENT</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('local')">⬢ LOC</div>
+                            <div class="mini-service-proxmox" onclick="event.stopPropagation(); showModal('ssd')">⬢ SSD</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #00fffc;">
+                        <div style="color: #00fffc; font-weight: bold; margin-bottom: 0.8rem; font-size: 0.9rem; text-transform: uppercase;">◢ CASAOS SERVICES ◣</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.75rem;">
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('files')">⬡ FILES</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('plex')">⬡ PLEX</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('prowlarr')">⬡ PROWL</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('jellyfin')">⬡ JELLY</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('sonarr')">⬡ SONARR</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('radarr')">⬡ RADARR</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('openwebui')">⬡ WEBUI</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('nvr-casa')">⬡ NVR</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('prometheus')">⬡ PROM</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('ha-casa')">⬡ HA</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('overseerr')">⬡ OVER</div>
+                            <div class="mini-service" onclick="event.stopPropagation(); showModal('appstore')">⬡ STORE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="node" onclick="showModal('linode')">
+                    <div class="dns-badge">
+                        ◢ CLOUDFLARE DNS ◣
+                    </div>
+                    <div class="node-icon">⬡</div>
+                    <div class="node-title">LINODE::VPS</div>
+                    <div class="domain-badge">◢ vps.domain.net ◣</div>
+                    <div class="node-description">
+                        <div class="terminal-line">CPU: 1 Core</div>
+                        <div class="terminal-line">RAM: 1 GB</div>
+                        <div class="terminal-line">STO: 25 GB SSD</div>
+                        <div class="terminal-line">LOC: Atlanta, GA</div>
+                    </div>
+                    <div class="tech-list">
+                        <span class="tech-tag">NGINX</span>
+                        <span class="tech-tag">SSO</span>
+                        <span class="tech-tag">NBN</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem; color: #00ff41;">
+                <p class="terminal-line">Click.any.service → View.details()</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">◢ PROXMOX VMS ◣</h2>
+        
+        <div class="services-grid">
+            <div class="service-card" onclick="showModal('omada')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[101] OMADA</div>
+                <div class="node-description">Network Controller :: TP-Link Omada Management System</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('backup')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[102] BACKUP</div>
+                <div class="node-description">Backup System :: Automated Configuration Backup</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('nvr')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[104] NVR</div>
+                <div class="node-description">Video Recorder :: 24/7 Surveillance System</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('monitoring')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[120] MONITOR</div>
+                <div class="node-description">Monitoring Stack :: Grafana + Prometheus</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('webui')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[121] WEBUI</div>
+                <div class="node-description">Web Interface :: Modern Management Console</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('casaos')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[100] CASAOS</div>
+                <div class="node-description">Media Server :: CasaOS Host System</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('homeassistant')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[200] HOME-AI</div>
+                <div class="node-description">Home Automation :: Smart Home Control Center</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('hub')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[289] HUB</div>
+                <div class="node-description">Custom Hub :: Automation & Integration Services</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('localnet')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[STR] LOCALNET</div>
+                <div class="node-description">Storage :: Local Network Storage</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('entertain')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[STR] ENTERTAINMENT</div>
+                <div class="node-description">Storage :: Media Content Repository</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('local')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[STR] LOCAL</div>
+                <div class="node-description">Storage :: General Purpose Storage</div>
+            </div>
+
+            <div class="service-card" onclick="showModal('ssd')">
+                <div class="service-icon">⬢</div>
+                <div class="service-title">[STR] SSD</div>
+                <div class="node-description">Storage :: High-Speed SSD Array</div>
+            </div>
+        </div>
